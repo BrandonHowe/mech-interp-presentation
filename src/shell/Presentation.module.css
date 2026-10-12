@@ -1,0 +1,65 @@
+.root {
+  position: relative;
+  height: 100dvh;
+  display: grid;
+  overflow: hidden;
+}
+
+.root[data-idle='true'] {
+  cursor: none;
+}
+
+.main {
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 0px;
+  transition: grid-template-columns var(--dur-med) var(--ease-out);
+}
+
+.root[data-captions='true'] .main {
+  grid-template-columns: minmax(0, 1fr) var(--caption-w);
+}
+
+.stageArea {
+  position: relative;
+  /* Clicks and drags on slides shouldn't highlight text or SVG; captions stay selectable. */
+  user-select: none;
+  -webkit-user-select: none;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  container-type: size;
+  container-name: stage;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Narrow screens: captions sit below the graphic and the step scrolls. */
+@media (max-width: 760px) {
+  .main,
+  .root[data-captions='true'] .main {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    overflow-y: auto;
+    transition: none;
+  }
+
+  /* Full-height graphic; captions follow below and scroll into view. */
+  .stageArea {
+    height: 100dvh;
+  }
+}

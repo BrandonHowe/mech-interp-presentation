@@ -1,0 +1,27 @@
+:root {
+  /* Palette (provisional) */
+  --bg: #f3eee4;
+  --bg-raised: #fbf8f2;
+  --ink: #1e1c19;
+  --ink-soft: #57524a;
+  --ink-faint: #8f887c;
+  --line: rgb(30 28 25 / 0.09);
+  --line-strong: rgb(30 28 25 / 0.2);
+  --group-a: #c64a32;
+  --group-b: #2c64b0;
+  --focus: #2c64b0;
+
+  /* Typography (provisional) */
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --font-body: 'IBM Plex Sans Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 180ms;
+  --dur-med: 450ms;
+
+  /* Layout */
+  --caption-w: clamp(300px, 27vw, 400px);
+  --radius: 12px;
+}

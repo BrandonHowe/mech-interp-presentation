@@ -1,0 +1,83 @@
+.layout {
+  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 4cqi;
+  padding: 6cqh 7cqi;
+}
+
+.copy {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  margin-bottom: clamp(16px, 3cqh, 32px);
+  font-size: clamp(11px, 1.15cqi, 15px);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, min(6.2cqi, 11cqh), 104px);
+  font-weight: 560;
+  font-variation-settings: 'opsz' 72;
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
+
+.subtitle {
+  margin-top: clamp(20px, 4cqh, 40px);
+  font-size: clamp(20px, min(3.6cqi, 6.4cqh), 52px);
+  font-weight: 520;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--ink-soft);
+}
+
+.graphic {
+  width: 100%;
+  max-height: 72cqh;
+  overflow: visible;
+}
+
+.dotA {
+  fill: var(--group-a);
+  opacity: 0.8;
+}
+
+.dotB {
+  fill: var(--group-b);
+  opacity: 0.8;
+}
+
+.dotA,
+.dotB {
+  fill-opacity: 0.7;
+}
+
+.arrow {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@container stage (aspect-ratio < 1.1) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    align-content: center;
+  }
+
+  .graphic {
+    max-height: 40cqh;
+  }
+}

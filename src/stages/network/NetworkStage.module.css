@@ -1,0 +1,221 @@
+.layout {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4cqh 5cqi;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: clamp(28px, min(4.4cqi, 7.5cqh), 72px);
+  font-weight: 560;
+  font-variation-settings: 'opsz' 72;
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  text-align: center;
+}
+
+.note {
+  max-width: 46em;
+  margin-top: clamp(4px, 1.5cqh, 20px);
+  font-size: clamp(15px, min(1.6cqi, 2.8cqh), 24px);
+  line-height: 1.4;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+/* Wide diagram (1000:440), limited by both the stage's width and height. */
+.figure {
+  width: min(100%, 1180px, 140cqh);
+  aspect-ratio: 1000 / 440;
+  margin-top: clamp(8px, 3cqh, 40px);
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+
+
+/* Diagram */
+
+/* The box fades from dark (closed) to light (open) with a CSS fill transition. */
+.box {
+  stroke-width: 1.5;
+  transition:
+    fill 0.6s,
+    stroke 0.6s;
+}
+
+.closed .box {
+  fill: var(--ink);
+  stroke: var(--ink);
+}
+
+.open .box {
+  fill: rgb(251 248 242 / 0.85);
+  stroke: var(--ink);
+}
+
+
+.weightsLabel {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 520;
+  text-anchor: middle;
+  transition: fill 0.6s;
+}
+
+
+.weightsLabel {
+  fill: var(--ink-faint);
+}
+
+
+
+.boxLabel {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 500;
+  font-variation-settings: 'opsz' 48;
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: var(--bg);
+}
+
+.chip {
+  fill: var(--bg-raised);
+  stroke: var(--line-strong);
+}
+
+.chipText {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 500;
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: var(--ink);
+}
+
+.numbers {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: var(--ink);
+}
+
+.rowName {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 520;
+  text-anchor: end;
+  dominant-baseline: central;
+  fill: var(--ink-soft);
+}
+
+.math {
+  font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', serif;
+  font-size: 1.2em;
+}
+
+.weights {
+  fill: var(--bg-raised);
+  stroke: var(--line-strong);
+}
+
+.chipLabel,
+.tag,
+.axisLabel {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 520;
+  fill: var(--ink-faint);
+}
+
+.chipLabel,
+.tag {
+  text-anchor: middle;
+}
+
+.tag {
+  fill: var(--ink-soft);
+}
+
+.arrow {
+  fill: none;
+  stroke: var(--ink-soft);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bracket,
+.value,
+.dotLabel {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  dominant-baseline: central;
+  fill: var(--ink);
+}
+
+.bracket {
+  font-size: 40px;
+  font-weight: 300;
+  text-anchor: middle;
+  fill: var(--ink-soft);
+}
+
+.value {
+  font-size: 20px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.highlight {
+  fill: var(--ink);
+  fill-opacity: 0.07;
+  stroke: var(--ink);
+  stroke-opacity: 0.35;
+}
+
+.dotLabel {
+  font-size: 17px;
+  font-weight: 600;
+  dominant-baseline: auto;
+  paint-order: stroke;
+  stroke: var(--bg-raised);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+/* Plane */
+
+.planeFrame {
+  fill: rgb(251 248 242 / 0.7);
+  stroke: var(--line-strong);
+}
+
+.planeAxis line {
+  stroke: var(--line-strong);
+}
+
+.ghost {
+  fill: none;
+  stroke: var(--ink-faint);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+
+.dot {
+  fill: var(--ink);
+  stroke: var(--bg-raised);
+  stroke-width: 3;
+}

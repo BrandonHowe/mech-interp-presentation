@@ -1,0 +1,71 @@
+.scale {
+  width: 100%;
+  margin: clamp(24px, 5.5cqh, 52px) 0 0;
+  font-size: clamp(12px, min(1.25cqi, 2.3cqh), 17px);
+}
+
+.scaleTrack {
+  position: relative;
+  height: 2px;
+  background: var(--line-strong);
+}
+
+.scaleTick {
+  position: absolute;
+  top: -3px;
+  width: 1px;
+  height: 8px;
+  background: var(--line-strong);
+}
+
+.scaleSpan {
+  position: absolute;
+  top: -1px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--ink);
+}
+
+.scaleMarker {
+  position: absolute;
+  top: -6px;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2px solid var(--bg);
+}
+
+.scaleNote {
+  position: absolute;
+  left: 50%;
+  bottom: 0.8em;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.scaleLabels {
+  display: flex;
+  justify-content: space-between;
+  gap: 2em;
+  margin-top: 0.9em;
+  color: var(--ink-soft);
+  text-align: left;
+}
+
+.scaleLabels > span:first-child,
+.scaleLabels > span:last-child {
+  flex: 1;
+}
+
+.scaleLabels span:last-child {
+  text-align: right;
+}
+
+.scaleLabels strong {
+  color: var(--ink);
+  font-weight: 650;
+}

@@ -1,0 +1,12 @@
+.reserve {
+  display: grid;
+}
+
+.cell {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+.cell[aria-hidden='true'] {
+  pointer-events: none;
+}

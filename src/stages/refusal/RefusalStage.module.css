@@ -1,0 +1,370 @@
+.layout {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(250px, 0.62fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(20px, min(4cqi, 6cqh), 72px);
+  padding: 4cqh 5cqi;
+}
+
+.copy {
+  max-width: 540px;
+  justify-self: end;
+  width: 100%;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: clamp(28px, min(3.8cqi, 7cqh), 60px);
+  font-weight: 560;
+  font-variation-settings: 'opsz' 72;
+  line-height: 1.06;
+  letter-spacing: -0.016em;
+  text-wrap: balance;
+}
+
+.body {
+  margin-top: clamp(10px, 2cqh, 20px);
+  font-size: clamp(15px, min(1.5cqi, 2.8cqh), 21px);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.formula {
+  display: inline-block;
+  margin-top: clamp(10px, 2.2cqh, 22px);
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: rgb(30 28 25 / 0.05);
+  font-family: var(--font-mono);
+  font-size: clamp(14px, min(1.45cqi, 2.7cqh), 20px);
+  color: var(--ink);
+}
+
+.panel {
+  margin-top: clamp(14px, 3.2cqh, 34px);
+  display: grid;
+  gap: clamp(8px, 1.6cqh, 14px);
+}
+
+.prompt,
+.promptMoved {
+  justify-self: start;
+  max-width: 100%;
+  padding: 8px 14px;
+  border-radius: 14px 14px 14px 4px;
+  font-size: clamp(14px, min(1.35cqi, 2.6cqh), 18px);
+  line-height: 1.35;
+}
+
+.prompt {
+  background: var(--ink);
+  color: var(--bg-raised);
+}
+
+.prompt::before {
+  content: 'Prompt';
+  display: block;
+  font-size: 0.68em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.promptMoved {
+  border: 1px dashed var(--line-strong);
+  color: var(--ink-soft);
+}
+
+.readout,
+.card {
+  display: grid;
+  gap: clamp(6px, 1.2cqh, 10px);
+  padding: clamp(10px, 1.8cqh, 16px) clamp(12px, 1.4cqi, 18px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgb(251 248 242 / 0.75);
+}
+
+.readoutRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.readoutLabel,
+.outcomeLabel {
+  min-width: 7.4em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.readoutValue {
+  font-family: var(--font-mono);
+  font-size: clamp(20px, min(2cqi, 3.8cqh), 28px);
+  font-variant-numeric: tabular-nums;
+}
+
+.readoutValueSmall {
+  font-family: var(--font-mono);
+  font-size: clamp(15px, min(1.4cqi, 2.7cqh), 19px);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+.verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: clamp(15px, min(1.4cqi, 2.7cqh), 19px);
+  font-weight: 600;
+}
+
+.verdict[data-side='r'] {
+  color: var(--group-a);
+}
+
+.verdict[data-side='n'] {
+  color: var(--group-b);
+}
+
+.shape {
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+
+.outcome {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 12px;
+}
+
+.outcomeBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.outcomeText {
+  font-size: clamp(13px, min(1.2cqi, 2.4cqh), 16px);
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+
+.pending {
+  font-size: 18px;
+  color: var(--ink-faint);
+}
+
+
+.slider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.alpha {
+  min-width: 5.2em;
+  font-family: var(--font-mono);
+  font-size: clamp(14px, min(1.3cqi, 2.6cqh), 18px);
+  font-variant-numeric: tabular-nums;
+}
+
+.slider input {
+  flex: 1;
+  accent-color: var(--ink);
+}
+
+.reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  padding: 5px 10px 5px 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 520;
+  color: var(--ink-soft);
+  transition: background-color var(--dur-fast), color var(--dur-fast);
+}
+
+.reset svg {
+  width: 15px;
+  height: 15px;
+}
+
+.reset:hover {
+  background: rgb(30 28 25 / 0.07);
+  color: var(--ink);
+}
+
+.figure {
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Square plot, as large as the stage allows. */
+.plotWrap {
+  width: min(100%, 90cqh);
+  aspect-ratio: 1;
+}
+
+@container stage (aspect-ratio < 1.1) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 2cqh;
+  }
+
+  .copy {
+    max-width: none;
+    justify-self: stretch;
+  }
+
+  .figure {
+    justify-content: center;
+  }
+
+  .plotWrap {
+    width: min(100%, 50cqh);
+  }
+}
+
+/* Step 1: generate activations */
+
+.generate {
+  margin-top: clamp(12px, 2.6cqh, 28px);
+  display: grid;
+  gap: clamp(10px, 2.2cqh, 22px);
+}
+
+.genSection {
+  padding: clamp(8px, 1.6cqh, 14px) clamp(12px, 1.4cqi, 18px);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgb(251 248 242 / 0.75);
+}
+
+.genTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(14px, min(1.3cqi, 2.4cqh), 18px);
+  font-weight: 600;
+}
+
+.genRows {
+  margin: clamp(4px, 1cqh, 10px) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: clamp(2px, 0.6cqh, 6px);
+}
+
+.genRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: baseline;
+  min-height: 1.4em;
+  border-bottom: 1px dashed var(--line);
+  font-size: clamp(12px, min(1.15cqi, 2.2cqh), 16px);
+}
+
+.genMore {
+  margin-top: clamp(4px, 0.8cqh, 8px);
+  font-size: clamp(12px, min(1.1cqi, 2.1cqh), 15px);
+  font-style: italic;
+  color: var(--ink-faint);
+}
+
+.genPrompt {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.genVector {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.generateButton {
+  justify-self: start;
+  padding: 7px 18px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg-raised);
+  font-size: clamp(13px, min(1.2cqi, 2.2cqh), 16px);
+  font-weight: 560;
+  transition:
+    background-color var(--dur-fast),
+    color var(--dur-fast);
+}
+
+.generateButton:disabled {
+  background: transparent;
+  color: var(--ink-soft);
+  border-color: var(--line-strong);
+}
+
+/* Accumulating sub-steps under a persistent "Step N" heading. */
+
+.steps {
+  margin: clamp(10px, 2.4cqh, 24px) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: clamp(10px, 2.2cqh, 22px);
+}
+
+.stepItem {
+  display: grid;
+  justify-items: start;
+  padding-left: 14px;
+  border-left: 3px solid var(--line-strong);
+  font-size: clamp(15px, min(1.5cqi, 2.8cqh), 21px);
+  line-height: 1.4;
+}
+
+.stepItem .formula {
+  margin-top: clamp(6px, 1.2cqh, 12px);
+}
+
+/* Step 3: validation */
+
+.predictionLine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(4px, 1cqh, 10px);
+}
+
+.reply {
+  margin-top: clamp(6px, 1.2cqh, 12px);
+  padding: 8px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px 14px 4px 14px;
+  background: var(--bg-raised);
+  font-size: clamp(14px, min(1.35cqi, 2.6cqh), 18px);
+}
+
+.reply[data-empty='true'] {
+  color: var(--ink-faint);
+  font-style: italic;
+}

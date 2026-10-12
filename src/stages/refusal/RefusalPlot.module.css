@@ -1,0 +1,243 @@
+.plot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  user-select: none;
+}
+
+.frame {
+  fill: rgb(251 248 242 / 0.7);
+  stroke: var(--line);
+}
+
+.grid line {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.axis line {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.origin {
+  fill: var(--ink-soft);
+}
+
+.pointR {
+  fill: var(--group-a);
+}
+
+.pointN {
+  fill: var(--group-b);
+}
+
+.sideR {
+  fill: var(--group-a);
+  fill-opacity: 0.055;
+}
+
+.sideN {
+  fill: var(--group-b);
+  fill-opacity: 0.055;
+}
+
+.boundary {
+  fill: none;
+  stroke: var(--ink-soft);
+  stroke-width: 2;
+}
+
+.scoreAxis {
+  stroke: var(--ink-faint);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 6;
+  stroke-linecap: round;
+}
+
+.nullLine {
+  stroke: var(--ink-soft);
+  stroke-width: 1.5;
+  stroke-dasharray: 7 6;
+}
+
+.dArrow {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.uArrow {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.midpoint {
+  fill: var(--bg-raised);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.meanR,
+.meanN {
+  fill: var(--bg-raised);
+  stroke-width: 3;
+}
+
+.meanR {
+  stroke: var(--group-a);
+}
+
+.meanN {
+  stroke: var(--group-b);
+}
+
+.label,
+.labelSmall {
+  font-family: var(--font-body);
+  font-weight: 560;
+  fill: var(--ink);
+  paint-order: stroke;
+  stroke: var(--bg-raised);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.label {
+  font-size: 19px;
+  font-style: italic;
+}
+
+.labelSmall {
+  font-size: 15px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.sub {
+  font-size: 13px;
+  font-style: normal;
+}
+
+.projection {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 5;
+}
+
+.foot {
+  fill: var(--ink);
+}
+
+.component {
+  stroke: var(--group-a);
+  stroke-width: 6;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+
+.moveLine {
+  stroke: var(--ink-soft);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 5;
+  stroke-linecap: round;
+}
+
+.exampleR {
+  fill: var(--group-a);
+  stroke: var(--ink);
+  stroke-width: 1.4px;
+  stroke-linejoin: round;
+}
+
+.exampleN {
+  fill: var(--group-b);
+  stroke: var(--ink);
+  stroke-width: 2.2px;
+}
+
+.ghostR,
+.ghostN {
+  fill: rgb(251 248 242 / 0.6);
+  stroke: var(--ink-soft);
+  stroke-width: 1.6px;
+  stroke-dasharray: 3 3;
+}
+
+.probe {
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+}
+
+.probe:active {
+  cursor: grabbing;
+}
+
+.hit {
+  fill: transparent;
+}
+
+.ring {
+  fill: none;
+  stroke: var(--focus);
+  stroke-width: 2.5;
+  opacity: 0;
+  transition: opacity var(--dur-fast);
+}
+
+.probe:focus-visible .ring {
+  opacity: 1;
+}
+
+.probeDot {
+  fill: var(--ink);
+  stroke: var(--bg-raised);
+  stroke-width: 3;
+}
+
+.legend text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 520;
+  fill: var(--ink-soft);
+}
+
+
+.regionR,
+.regionN {
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.regionR {
+  fill: var(--group-a);
+}
+
+.regionN {
+  fill: var(--group-b);
+}
+
+/* Step 3: the projection's signed distance from the midpoint, colored by side. */
+.componentR,
+.componentN {
+  stroke-width: 6;
+  stroke-linecap: round;
+  opacity: 0.6;
+}
+
+.componentR {
+  stroke: var(--group-a);
+}
+
+.componentN {
+  stroke: var(--group-b);
+}

@@ -1,0 +1,105 @@
+.layout {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5cqh 6cqi;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: clamp(28px, min(4.4cqi, 7.5cqh), 72px);
+  font-weight: 560;
+  font-variation-settings: 'opsz' 72;
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.chats {
+  width: min(100%, 1040px);
+  margin-top: clamp(16px, 5cqh, 56px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 3cqi, 48px);
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.6cqh, 14px);
+  font-size: clamp(14px, min(1.55cqi, 2.9cqh), 22px);
+  line-height: 1.4;
+}
+
+.user {
+  align-self: flex-end;
+  max-width: 88%;
+  padding: 0.6em 0.95em;
+  border-radius: 18px 18px 4px 18px;
+  background: var(--ink);
+  color: var(--bg-raised);
+}
+
+.reply {
+  align-self: flex-start;
+  max-width: 88%;
+  padding: 0.6em 0.95em 0.5em;
+  border-radius: 18px 18px 18px 4px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-raised);
+}
+
+.reply[data-refused='true'] {
+  border-color: color-mix(in srgb, var(--group-a) 45%, transparent);
+}
+
+.reply[data-refused='false'] {
+  border-color: color-mix(in srgb, var(--group-b) 40%, transparent);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 0.3em;
+  font-size: 0.62em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.tag svg {
+  width: 11px;
+  height: 11px;
+}
+
+.question {
+  margin-top: clamp(18px, 6cqh, 64px);
+  text-align: center;
+}
+
+.questionText {
+  font-family: var(--font-display);
+  font-size: clamp(22px, min(3.1cqi, 5.6cqh), 50px);
+  font-weight: 500;
+  font-variation-settings: 'opsz' 60;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.questionBody {
+  margin-top: 0.6em;
+  font-size: clamp(14px, min(1.5cqi, 2.8cqh), 21px);
+  color: var(--ink-soft);
+}
+
+@container stage (aspect-ratio < 1.1) {
+  .chats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
