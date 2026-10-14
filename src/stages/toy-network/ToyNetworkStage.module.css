@@ -82,23 +82,6 @@
   stroke-linejoin: round;
 }
 
-.groupLabel {
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 520;
-  font-style: italic;
-  text-anchor: middle;
-  fill: var(--ink-faint);
-}
-
-.layerLabel {
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 520;
-  text-anchor: middle;
-  fill: var(--ink-faint);
-}
-
 .picker {
   display: flex;
   gap: 8px;

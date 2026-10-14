@@ -1,0 +1,60 @@
+.layout {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, auto) auto;
+  align-content: center;
+  justify-items: center;
+  gap: clamp(14px, 3.6cqh, 40px);
+  padding: 5cqh 6cqi;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, min(4.4cqi, 7.5cqh), 72px);
+  font-weight: 560;
+  font-variation-settings: 'opsz' 72;
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  text-align: center;
+}
+
+.list {
+  width: min(100%, 1240px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.6em;
+  font-size: clamp(15px, min(1.8cqi, 3.3cqh), 26px);
+  line-height: 1.4;
+}
+
+/* Dot bullets, as on "Why Mech Interp?". */
+.list li {
+  position: relative;
+  padding-left: 1.4em;
+  text-wrap: pretty;
+}
+
+.list li::before {
+  content: '';
+  position: absolute;
+  left: 0.15em;
+  top: 0.55em;
+  width: 0.36em;
+  height: 0.36em;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.figure {
+  display: block;
+  width: min(100%, 1240px);
+  min-height: 0;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px var(--shadow), 0 12px 32px -14px var(--shadow);
+}

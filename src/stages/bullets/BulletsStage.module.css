@@ -27,6 +27,13 @@
   gap: clamp(12px, 3.5cqh, 36px);
 }
 
+.list[data-columns] {
+  width: min(100%, 1240px);
+  grid-template-rows: repeat(var(--rows), auto);
+  grid-auto-flow: column;
+  column-gap: clamp(24px, 6cqi, 96px);
+}
+
 .item {
   position: relative;
   padding-left: 1.4em;
@@ -57,4 +64,32 @@
   font-size: 0.8em;
   font-style: italic;
   color: var(--ink-soft);
+}
+
+/* Sub-bullets: a step smaller, hollow dot. */
+.points {
+  margin: 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4em;
+}
+
+.points li {
+  position: relative;
+  padding-left: 1.4em;
+  font-size: 0.86em;
+  color: var(--ink-soft);
+}
+
+.points li::before {
+  content: '';
+  position: absolute;
+  left: 0.15em;
+  top: 0.55em;
+  width: 0.36em;
+  height: 0.36em;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  box-sizing: border-box;
 }

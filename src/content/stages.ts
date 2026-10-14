@@ -4,22 +4,38 @@ import { BulletsStage } from '../stages/bullets/BulletsStage'
 import { ApproachesStage } from '../stages/approaches/ApproachesStage'
 import { FruitfulStage } from '../stages/fruitful/FruitfulStage'
 import { CardsStage } from '../stages/cards/CardsStage'
+import { PartStage } from '../stages/part/PartStage'
+import { FigureStage } from '../stages/application/FigureStage'
+import { ApplicationStage } from '../stages/application/ApplicationStage'
+import { TraitsStage } from '../stages/application/TraitsStage'
+import { SpaceTimeStage } from '../stages/application/SpaceTimeStage'
+import { EvalAwarenessStage } from '../stages/application/EvalAwarenessStage'
+import { FellowshipStage } from '../stages/fellowship/FellowshipStage'
+import { aiSafetyStages } from './aiSafety'
 import { networkStages } from './network'
 import { refusalStages } from './refusal'
-import { StructureTestStage } from '../stages/structure-test/StructureTestStage'
-import { initialProbeState } from '../stages/structure-test/data'
 
 /*
- * Narrative sequence. Step ids are stable and appear in URLs (#/stage/step);
- * rename them deliberately. Real content is not written yet: the title copy is
- * a placeholder, and the structure test exists only to exercise the shell.
+ * Narrative sequence. Step ids are stable and appear in URLs (/mech-interp-presentation/stage/step);
+ * rename them deliberately.
  */
+/** Section divider on the dark theme, with a slow fade in and out. */
+const partStage = (n: number, id: string, heading: string) =>
+  defineStage({
+    id: `part-${n}`,
+    title: `Part ${n}: ${heading}`,
+    component: PartStage,
+    initialInteraction: undefined,
+    transition: 'dramatic',
+    theme: 'dark',
+    steps: [{ id, label: `Part ${n}: ${heading}`, screen: { eyebrow: `Part ${n}`, heading } }],
+  })
+
 const APPROACH_COLUMNS = [
   {
     id: 'bottom-up',
     title: 'Bottom-up',
     body: 'Analyze individual neurons and circuits',
-    figureNote: 'e.g. the induction-head circuit',
   },
   {
     id: 'top-down',
@@ -74,11 +90,12 @@ export const stages = [
           heading: 'Mind-reading LLMs with Mechanistic Interpretability',
           body: 'NJIT AI Safety',
         },
-        caption:
-          'Placeholder caption for the title. In self-guided mode, this panel explains what the presenter would say aloud.\n\nUse the arrow keys, Page Up/Down, or the buttons below to move between steps. Press C to toggle this panel.',
       },
     ],
   }),
+  partStage(1, 'ai-safety', 'What is AI safety?'),
+  ...aiSafetyStages,
+  partStage(2, 'mech-interp', 'Mechanistic Interpretability'),
   defineStage({
     id: 'why',
     title: 'Why mech interp',
@@ -103,8 +120,6 @@ export const stages = [
             },
           ],
         },
-        caption:
-          'Watching outputs tells us what a model does, not why. A model, like a person, could give convincing answers while internally pursuing something else.\n\nIn principle, a complete understanding of a model’s internal states would reveal that. In practice we are far from complete understanding, so the rest of this talk looks at what we can already read from inside a model, and how to test whether it matters.',
       },
     ],
   }),
@@ -121,8 +136,6 @@ export const stages = [
           heading: 'Main Approaches',
           columns: APPROACH_COLUMNS,
         },
-        caption:
-          'Bottom-up work starts from the smallest parts: what does this neuron respond to, and which connections between neurons implement a particular computation (a “circuit”)?\n\nTop-down work starts from something we already care about, like a concept or a behavior, and asks how the model represents it across many neurons at once.',
       },
     ],
   }),
@@ -136,24 +149,100 @@ export const stages = [
         id: 'induction',
         label: 'Bottom-up is painstaking',
         screen: FRUITFUL_SCREEN,
-        caption:
-          'The indirect-object-identification study (Wang et al., “Interpretability in the Wild”) traced how GPT-2 small completes “…John gave a drink to” with “Mary”. The diagram is the paper’s summary: 26 attention heads in 7 functional groups pass information about which names appeared and which one was repeated, and the Name Mover Heads finally copy “Mary” to the output.\n\nIt is one of the most detailed circuit analyses of a real language model, it took a 25-page paper, and it is still only a partial account of the behavior.',
       },
       {
         id: 'scale',
         label: 'The scale problem',
         screen: FRUITFUL_SCREEN,
-        caption:
-          'Both approaches are active research areas, and bottom-up work has produced detailed explanations of specific mechanisms, like the circuit above or induction heads (Olsson et al., 2022).\n\nBut complete reverse-engineering has only been achieved for tiny models. One example is a ~200K-parameter transformer trained on modular addition (Nanda et al., 2023). OpenAI has not published GPT-6’s size; ~10 trillion parameters is a widely reported estimate. That gap of roughly 7–8 orders of magnitude is why this talk takes the top-down route: pick a behavior that matters for safety and look for how it is represented.',
       },
     ],
   }),
   ...networkStages,
   ...refusalStages,
   defineStage({
+    id: 'persona-vectors',
+    title: 'Character traits',
+    component: TraitsStage,
+    initialInteraction: undefined,
+    steps: [
+      {
+        id: 'persona-vectors',
+        label: 'Character traits',
+        screen: {
+          heading: 'Character Traits',
+          bullets: [
+            {
+              text: 'Directions in the activation space known as **persona vectors** partially control traits such as evil, sycophancy, and propensity to hallucinate.',
+            },
+            { text: 'Can also generate vectors for almost any personality trait: politeness, apathy, humor, tone, and optimism.' },
+          ],
+        },
+      },
+    ],
+  }),
+  defineStage({
+    id: 'space-time',
+    title: 'Space and time',
+    component: SpaceTimeStage,
+    initialInteraction: undefined,
+    steps: [{ id: 'space-time', label: 'Space and time: reading numbers', screen: { heading: 'Space and Time' } }],
+  }),
+  defineStage({
+    id: 'emotion-concepts',
+    title: 'Emotion concepts',
+    component: ApplicationStage,
+    initialInteraction: undefined,
+    steps: [
+      {
+        id: 'emotion-concepts',
+        label: 'Emotion concepts',
+        screen: {
+          heading: 'Emotion Concepts',
+          bullets: [
+            { text: 'Emotions are also represented **linearly** in LLMs.' },
+            { text: 'Similar emotions are more closely aligned than different emotions, which are less closely aligned.' },
+          ],
+          figure: {
+            src: '/images/applications/emotion-similarity.png',
+            alt: 'Heatmap from the emotion concepts paper (Figure 5): pairwise cosine similarity between all 171 emotion vectors, hierarchically clustered. Blocks of related emotions (joyful/optimistic, scared/tense, sullen/heartbroken, furious/insulted) are red; opposite clusters are blue.',
+          },
+        },
+      },
+    ],
+  }),
+  defineStage({
+    id: 'emotion-behavior',
+    title: 'Emotions drive behavior',
+    component: FigureStage,
+    initialInteraction: undefined,
+    steps: [
+      {
+        id: 'emotion-behavior',
+        label: 'Emotion vectors affect behavior',
+        screen: {
+          heading: 'Emotions Also Drive Behavior',
+          figure: {
+            src: '/images/applications/emotion-behavior.png',
+            alt: 'Three panels from Anthropic\'s emotion concepts post: afraid rises and calm falls as a Tylenol dose becomes unsafe; steering with positive emotions raises preference for an activity and negative ones lower it; steering toward desperate raises reward hacking while calm lowers it.',
+          },
+        },
+      },
+    ],
+  }),
+  defineStage({
+    id: 'eval-awareness',
+    title: 'Eval awareness',
+    component: EvalAwarenessStage,
+    initialInteraction: undefined,
+    steps: [
+      { id: 'eval-awareness', label: 'Eval awareness: what it’s good for', screen: { heading: 'Eval Awareness' } },
+      { id: 'falls-short', label: 'Eval awareness: where it falls short', screen: { heading: 'Eval Awareness' } },
+    ],
+  }),
+  defineStage({
     id: 'more',
     title: 'What else can we read?',
-    component: CardsStage,
+    component: BulletsStage,
     initialInteraction: undefined,
     steps: [
       {
@@ -161,103 +250,126 @@ export const stages = [
         label: 'What else can we read?',
         screen: {
           heading: 'What Else Can We Read?',
-          // Draft: each card is a research lead from the plan, not yet re-verified.
-          columns: [
-            { id: 'truth', title: 'True or false', body: 'Whether a statement is factually true' },
-            { id: 'space-time', title: 'Space and time', body: 'Where places are and when events happened' },
-            { id: 'othello', title: 'Board state', body: 'The Othello board, in a model trained only on moves' },
-            { id: 'persona', title: 'Personality traits', body: 'Sycophancy, hallucination, and other character traits' },
-            { id: 'assistant', title: 'The assistant persona', body: 'How much the model is acting as its usual assistant' },
+          // Linear-probe and steering papers, oldest first (arXiv dates checked October 14).
+          bulletColumns: 2,
+          bullets: [
+            { text: '[Othello board state](https://arxiv.org/abs/2309.00941) — Sep 2023' },
+            { text: '[Space and time](https://arxiv.org/abs/2310.02207) — Oct 2023' },
+            { text: '[The geometry of truth](https://arxiv.org/abs/2310.06824) — Oct 2023' },
+            { text: '[Refusal](https://arxiv.org/abs/2406.11717) — Jun 2024' },
+            { text: '[Eval awareness](https://arxiv.org/abs/2507.01786) — Jul 2025' },
+            { text: '[Persona vectors](https://arxiv.org/abs/2507.21509) — Jul 2025' },
+            { text: '[The assistant axis](https://arxiv.org/abs/2601.10387) — Jan 2026' },
+            { text: '[Emotion concepts](https://arxiv.org/abs/2604.07729) — Apr 2026' },
+            { text: '[Task preferences](https://arxiv.org/abs/2605.13339) — May 2026' },
+            { text: '[The pain axis](https://arxiv.org/abs/2609.16247) — Sep 2026' },
           ],
         },
-        caption:
-          'Refusal is one example among many. Researchers have found information that can be read out of activations, often with simple linear methods: whether a factual statement is true (Marks & Tegmark, 2023), the coordinates of places and dates of events (Gurnee & Tegmark, 2023), the board state in a model trained only on Othello moves (Li et al., 2022; Nanda, 2023), and character traits like sycophancy (Anthropic’s persona vectors, 2025), including how strongly a model is in its assistant persona (Anthropic’s assistant axis).\n\nThese results come from particular models and setups, use different methods, and differ in how much causal evidence they have: some only show the information is readable, others also steer behavior with it. Reading “true versus false” is also not the same as detecting a deliberate lie.',
       },
     ],
   }),
   defineStage({
     id: 'takeaway',
-    title: 'Takeaways',
+    title: 'Recap: Linear Probing',
     component: BulletsStage,
     initialInteraction: undefined,
     transition: 'dramatic',
     steps: [
       {
         id: 'takeaway',
-        label: 'Takeaways',
+        label: 'Recap: Linear Probing',
         screen: {
-          heading: 'Takeaways',
+          heading: 'Recap: Linear Probing',
           bullets: [
-            { text: 'Huge, complicated models sometimes contain **surprisingly simple** structure.' },
-            { text: 'We can **read** information from activations, and **test** whether it drives behavior.' },
-            { text: 'Most of it is still unexplained, and you can help work on it.' },
+            { text: 'Huge, complicated LLMs contain many instances of **surprisingly simple** linear structure!' },
+            {
+              text: 'We can access information about the LLMs by reading their activations, and intervene using steering vectors to change behavior.',
+            },
+            {
+              text: "Linear probing is incredibly powerful, but is just one technique out of many. There's still so much that is unexplained about how LLMs operate.",
+            },
           ],
         },
-        caption:
-          'We went from an intuition (activations are points in a space) to a measurement (a direction that predicts refusal) to an intervention (removing or adding that direction changes whether the model refuses, in the reported setup).\n\nThe limits matter as much as the results: being able to read a signal is not the same as it causing behavior, controlling one behavior is not a full explanation of the model, and a refusal direction is not a safety solution. Most of what happens inside these models is still unexplained, which is exactly why this is a good time to get involved. NJIT AI Safety’s technical fellowship is one place to start.',
+      },
+    ],
+  }),
+  partStage(3, 'next-steps', 'Next Steps'),
+  defineStage({
+    id: 'what-we-do',
+    title: 'What we do',
+    component: CardsStage,
+    initialInteraction: undefined,
+    steps: [
+      {
+        id: 'what-we-do',
+        label: 'What we do',
+        screen: {
+          heading: 'What We Do',
+          columns: [
+            {
+              id: 'resources',
+              icon: 'compass',
+              title: 'Resources',
+              body: 'Pathways and individual guidance into AI safety careers, including research and field building',
+            },
+            { id: 'upskilling', icon: 'book', title: 'Upskilling events', body: 'Intro fellowship and reading groups' },
+            {
+              id: 'development',
+              icon: 'people',
+              title: 'Professional development',
+              body: '1-on-1 meetings with experienced organizers',
+            },
+          ],
+        },
       },
     ],
   }),
   defineStage({
-    id: 'structure-test',
-    title: 'Structure test',
-    component: StructureTestStage,
-    initialInteraction: initialProbeState,
+    id: 'open-meetings',
+    title: 'Open meetings',
+    component: BulletsStage,
+    initialInteraction: undefined,
     steps: [
       {
-        id: 'points',
-        label: 'Reveal points',
+        id: 'open-meetings',
+        label: 'Open meetings',
         screen: {
-          eyebrow: 'Structure test',
-          heading: 'Two groups of points',
-          body: 'Synthetic placeholder data for testing a diagram that persists across steps.',
+          heading: 'Open Meetings',
+          bulletColumns: 2,
+          bullets: [
+            { text: 'Paper and blog post readings' },
+            { text: 'Exploring AI safety concepts' },
+            { text: 'AI safety discussions' },
+            { text: '**Open to anyone!** No signup required' },
+            { text: 'Snacks and drinks provided' },
+            { text: 'Usually Wednesdays at 4 PM, though times vary' },
+          ],
         },
-        caption:
-          'This stage stays mounted while its steps change. The plot should evolve in place rather than being replaced.\n\nCheck: jumping straight to a later step (or reloading) should land on the same picture as stepping through in order.',
       },
+    ],
+  }),
+  defineStage({
+    id: 'fellowship',
+    title: 'Apply to the technical fellowship',
+    component: FellowshipStage,
+    initialInteraction: undefined,
+    steps: [
       {
-        id: 'means',
-        label: 'Show means',
+        id: 'apply',
+        label: 'Apply to the technical fellowship',
         screen: {
-          eyebrow: 'Structure test',
-          heading: 'Each group’s mean',
-          body: 'Individual points fade back so the two averages stand out.',
+          heading: 'Apply to our technical fellowship!',
+          subheading: 'Applications close October 21 EOD!',
+          bullets: [
+            { text: '4 weeks, 2 hours per week' },
+            { text: 'Guided reading and discussion' },
+            { text: 'Learn about mechanistic interpretability, scalable oversight, AI control, and more' },
+            { text: 'Food will be served!' },
+          ],
+          // QR code generated for this URL (October 13, 2026).
+          figure: { src: '/images/apply-qr.svg', alt: 'QR code linking to njitaisafety.org/apply' },
+          body: 'njitaisafety.org/apply',
         },
-        caption:
-          'Means are computed from the data in model coordinates and only then mapped to the screen.\n\nCheck: advance and go back quickly. Animations should retarget smoothly rather than queueing stale reveals.',
-      },
-      {
-        id: 'direction',
-        label: 'Draw direction',
-        screen: {
-          eyebrow: 'Structure test',
-          heading: 'A direction between the means',
-          body: 'The arrow points from the group B mean toward the group A mean.',
-        },
-        caption:
-          'The arrow draws itself in, then its head appears. With reduced motion (menu → Motion → Reduced), the same endpoint appears without movement.',
-      },
-      {
-        id: 'boundary',
-        label: 'Add boundary',
-        screen: {
-          eyebrow: 'Structure test',
-          heading: 'A perpendicular boundary',
-          body: 'A line through the midpoint, perpendicular to the direction. Points return so the overlap stays visible.',
-        },
-        caption:
-          'The boundary passes through the midpoint between the means. Some points sit on the “wrong” side on purpose: the placeholder data overlaps.',
-      },
-      {
-        id: 'probe',
-        label: 'Drag the probe',
-        screen: {
-          eyebrow: 'Structure test',
-          heading: 'Drag the probe',
-          body: 'Its score is the signed distance along the direction, measured from the midpoint.',
-        },
-        caption:
-          'Drag the dark point, or focus it with Tab and use the arrow keys (Shift for bigger steps). While it is focused, arrow keys move the probe instead of changing steps.\n\nCheck: leave this section and come back. The probe should stay where you left it. Reset restores the default position.',
       },
     ],
   }),

@@ -1,0 +1,12 @@
+/* Paper figures have white backgrounds. */
+.paper {
+  padding: clamp(8px, 1.6cqh, 18px);
+  background: #fff;
+}
+
+.paper img {
+  display: block;
+  width: 100%;
+  max-height: 80cqh;
+  object-fit: contain;
+}

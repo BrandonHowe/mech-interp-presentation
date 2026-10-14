@@ -102,11 +102,17 @@ export function Presentation({ stages }: { stages: AnyStage[] }) {
       reducedMotion="user"
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className={styles.root} data-captions={prefs.captions} data-idle={idle}>
+      <div
+        className={styles.root}
+        data-captions={prefs.captions}
+        data-idle={idle}
+        data-theme={stage.theme ?? 'light'}
+      >
         <Background />
         <main className={styles.main}>
           <div
             className={styles.stageArea}
+            data-selectable={stage.initialInteraction === undefined}
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
             onPointerCancel={() => (swipe.current = null)}

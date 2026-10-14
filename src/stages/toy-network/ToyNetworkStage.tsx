@@ -14,8 +14,11 @@ const W = 520
 const H = 360
 const LAYER_X = [70, 260, 450]
 const R = 22
+const GAP = 120
+// Crop the viewBox to the nodes (top and bottom rows sit at H/2 ± GAP).
+const TOP = H / 2 - GAP - R - 12
 
-const layerY = (n: number) => Array.from({ length: n }, (_, i) => H / 2 + (i - (n - 1) / 2) * 96)
+const layerY = (n: number) => Array.from({ length: n }, (_, i) => H / 2 + (i - (n - 1) / 2) * GAP)
 const NODES = [2, 3, 2].map((n, l) => layerY(n).map((y) => ({ x: LAYER_X[l], y })))
 const EDGES = [W1, W2].flatMap((m, l) =>
   m.flatMap((row, to) => row.map((w, from) => ({ a: NODES[l][from], b: NODES[l + 1][to], w, key: `${l}-${from}-${to}` }))),
@@ -34,7 +37,7 @@ export function ToyNetworkStage({ step, interaction, setInteraction }: StageProp
 
       <div className={styles.row}>
         <div className={styles.figure}>
-          <svg className={styles.svg} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="A tiny network: lines are weights, circles are activations">
+          <svg className={styles.svg} viewBox={`0 ${TOP} ${W} ${H - 2 * TOP}`} role="img" aria-label="A tiny network: lines are weights, circles are activations">
             {EDGES.map(({ a, b, w, key }) => (
               <line
                 key={key}
@@ -72,16 +75,6 @@ export function ToyNetworkStage({ step, interaction, setInteraction }: StageProp
                 )
               }),
             )}
-            {[0, 1].map((g) => (
-              <text key={g} className={styles.groupLabel} x={(LAYER_X[g] + LAYER_X[g + 1]) / 2} y={18}>
-                weights
-              </text>
-            ))}
-            {['input', 'hidden', 'output'].map((name, l) => (
-              <text key={name} className={styles.layerLabel} x={LAYER_X[l]} y={H - 6}>
-                {name}
-              </text>
-            ))}
           </svg>
           <div className={styles.picker} role="radiogroup" aria-label="Input">
             {INPUTS.map((option, k) => (
@@ -105,8 +98,8 @@ export function ToyNetworkStage({ step, interaction, setInteraction }: StageProp
             </svg>
             <div>
               <h3 className={styles.cardTitle}>Weights</h3>
-              <p className={styles.cardBody}>The connections. Learned in training, then fixed.</p>
-              <p className={styles.analogy}>Like the brain’s physical structure, which an MRI shows.</p>
+              <p className={styles.cardBody}>Connections between neurons that stay the same across all inputs.</p>
+              <p className={styles.analogy}>Think of the physical structure of your brain.</p>
             </div>
           </div>
           <div className={styles.card}>
@@ -117,7 +110,7 @@ export function ToyNetworkStage({ step, interaction, setInteraction }: StageProp
             <div>
               <h3 className={styles.cardTitle}>Activations</h3>
               <p className={styles.cardBody}>How strongly each neuron fires for this input.</p>
-              <p className={styles.analogy}>Like brain activity, which an fMRI shows.</p>
+              <p className={styles.analogy}>Think of the electrical signals of brain activity.</p>
             </div>
           </div>
         </div>

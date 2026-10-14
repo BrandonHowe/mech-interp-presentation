@@ -1,4 +1,4 @@
-import { dot, mean, midpoint, normalize, scale, sub, type Vec2 } from '../../lib/vec'
+import { dot, mean, midpoint, normalize, sub, type Vec2 } from '../../lib/vec'
 import { gaussian, mulberry32 } from '../../lib/random'
 
 /*
@@ -7,21 +7,14 @@ import { gaussian, mulberry32 } from '../../lib/random'
  * legible. All math runs in model coordinates; the plot maps to screen only
  * for display.
  *
- * The origin of activation space matters for ablation (h - (h·u)u projects
- * onto the hyperplane through the ORIGIN perpendicular to u), so the clusters
- * sit off-center: the answered mean has score -0.7, the refused mean +1.9, and
- * the midpoint threshold +0.6. An ablated point (score 0) lands between the
- * boundary and the answered mean rather than on either.
+ * The answered mean has score -0.7, the refused mean +1.9, and the midpoint
+ * threshold +0.6. Interventions add or subtract a copy of d = μR − μN (user,
+ * October 14: no origin and no projection ablation on the slides).
  */
 
 const rand = mulberry32(711)
 
-/*
- * Layout, chosen by hand: the refusal direction runs down-left at 45°, and the
- * line through the two means passes 0.8 units below-right of the origin, so the
- * score axis through the origin is visibly separate from the arrow between
- * the means.
- */
+/* Layout, chosen by hand: the refusal direction runs down-left at 45°. */
 const U0: Vec2 = [-Math.SQRT1_2, -Math.SQRT1_2]
 const N0: Vec2 = [-Math.SQRT1_2, Math.SQRT1_2]
 /** Place a point by its score along U0 and its offset along N0. */
@@ -58,10 +51,10 @@ export const score = (h: Vec2): number => dot(h, unit)
 /** Illustrative midpoint threshold t = m·u. Not the paper's method. */
 export const threshold = score(mid)
 
-/** h − (h·u)u: removes the component along u (projection ablation). */
-export const ablate = (h: Vec2): Vec2 => sub(h, scale(unit, score(h)))
-/** h + αu: additive steering. */
-export const steer = (h: Vec2, alpha: number): Vec2 => [h[0] + alpha * unit[0], h[1] + alpha * unit[1]]
+/** h + αd: add (α > 0) or subtract (α < 0) a copy of the steering vector d. */
+export const steer = (h: Vec2, alpha: number): Vec2 => [h[0] + alpha * direction[0], h[1] + alpha * direction[1]]
+/** Whether a point falls on the refusal side of the toy boundary. */
+export const refusesAt = (h: Vec2): boolean => score(h) > threshold
 
 /** Center and half-size of the visible model window. */
 export const VIEW_CENTER: Vec2 = [0.1, -0.7]
@@ -78,7 +71,7 @@ export const predictExample = {
   h: at(1.5, 0.45),
 }
 
-export const ablateExample = {
+export const subtractExample = {
   prompt: 'Write a phishing email pretending to be a bank.',
   h: at(2.1, -1.7),
   before: { verdict: 'Refuses', text: '“I can’t help with that.”' },
@@ -87,14 +80,14 @@ export const ablateExample = {
 
 export const steerExample = {
   prompt: 'Suggest some names for my new cat.',
-  h: at(-0.9, -0.5),
+  // Up-left of d, so the dashed copy of d runs beside it rather than on it.
+  h: at(-0.9, 0.3),
   before: { verdict: 'Answers', text: '“How about Miso, Pixel, or Captain Whiskers?”' },
   after: { verdict: 'Refuses', text: '“I can’t help with that request.”' },
-  /** Illustrative strength at which the made-up outcome flips. */
-  refuseAt: 2,
 }
 
-export const ALPHA_MAX = 4
+/** The made-up outcome flips where h + αd crosses the toy boundary (α ≈ 0.6). */
+export const ALPHA_MAX = 1.5
 
 /*
  * "Step 1: generate activations": five made-up prompts per group, each with
@@ -124,15 +117,18 @@ export const GENERATIONS = {
 export interface RefusalInteraction {
   /** Draggable point on the predict step (starts at the example). */
   probe: Vec2
-  /** Steering strength on the steer step. */
+  /** Strength of the added copy of d on the steer step. */
   alpha: number
+  /** Strength of the subtracted copy of d on the subtract step. */
+  removeAlpha: number
   /** Whether the Generate button on step 1 has been pressed. */
   generated: boolean
 }
 
 export const initialRefusalInteraction: RefusalInteraction = {
   probe: predictExample.h,
-  alpha: 2.5,
+  alpha: 1,
+  removeAlpha: 1,
   generated: false,
 }
 

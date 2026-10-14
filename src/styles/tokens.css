@@ -10,9 +10,15 @@
   --group-a: #c64a32;
   --group-b: #2c64b0;
   --focus: #2c64b0;
+  /* Shell surfaces */
+  --glass: rgb(251 248 242 / 0.45);
+  --glass-strong: rgb(251 248 242 / 0.55);
+  --hover: rgb(30 28 25 / 0.07);
+  --shadow: rgb(30 28 25 / 0.25);
+  --dot: rgb(30 28 25 / 0.11);
 
   /* Typography (provisional) */
-  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --font-display: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
   --font-body: 'IBM Plex Sans Variable', system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
@@ -24,4 +30,83 @@
   /* Layout */
   --caption-w: clamp(300px, 27vw, 400px);
   --radius: 12px;
+}
+
+/*
+ * Dark theme for part-title stages (StageDef.theme). Registering the colors
+ * lets them animate: the shell root transitions them, and everything inside
+ * inherits the in-between values.
+ */
+@property --bg { syntax: '<color>'; inherits: true; initial-value: #f3eee4; }
+@property --bg-raised { syntax: '<color>'; inherits: true; initial-value: #fbf8f2; }
+@property --ink { syntax: '<color>'; inherits: true; initial-value: #1e1c19; }
+@property --ink-soft { syntax: '<color>'; inherits: true; initial-value: #57524a; }
+@property --ink-faint { syntax: '<color>'; inherits: true; initial-value: #8f887c; }
+@property --line { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --line-strong { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-strong { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --hover { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --shadow { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --dot { syntax: '<color>'; inherits: true; initial-value: transparent; }
+
+[data-theme='dark'] {
+  --bg: #171512;
+  --bg-raised: #221f1b;
+  --ink: #f3eee4;
+  --ink-soft: #c2baad;
+  --ink-faint: #8a8377;
+  --line: rgb(243 238 228 / 0.1);
+  --line-strong: rgb(243 238 228 / 0.22);
+  --glass: rgb(34 31 27 / 0.55);
+  --glass-strong: rgb(34 31 27 / 0.65);
+  --hover: rgb(243 238 228 / 0.08);
+  --shadow: rgb(0 0 0 / 0.5);
+  --dot: rgb(243 238 228 / 0.07);
+}
+
+/* Part 1's risk slides get darker as the argument gets scarier. */
+[data-theme='dusk'] {
+  --bg: #d3c9b8;
+  --bg-raised: #e3dacb;
+  --ink: #1e1c19;
+  --ink-soft: #4b463f;
+  --ink-faint: #6f685d;
+  --line: rgb(30 28 25 / 0.12);
+  --line-strong: rgb(30 28 25 / 0.24);
+  --glass: rgb(227 218 203 / 0.5);
+  --glass-strong: rgb(227 218 203 / 0.6);
+  --hover: rgb(30 28 25 / 0.08);
+  --shadow: rgb(30 28 25 / 0.3);
+  --dot: rgb(30 28 25 / 0.12);
+}
+
+[data-theme='night'] {
+  --bg: #2a2521;
+  --bg-raised: #36302b;
+  --ink: #f3eee4;
+  --ink-soft: #c9c0b2;
+  --ink-faint: #958d80;
+  --line: rgb(243 238 228 / 0.11);
+  --line-strong: rgb(243 238 228 / 0.24);
+  --glass: rgb(54 48 43 / 0.55);
+  --glass-strong: rgb(54 48 43 / 0.65);
+  --hover: rgb(243 238 228 / 0.08);
+  --shadow: rgb(0 0 0 / 0.45);
+  --dot: rgb(243 238 228 / 0.06);
+}
+
+[data-theme='abyss'] {
+  --bg: #0c0a09;
+  --bg-raised: #191513;
+  --ink: #f3eee4;
+  --ink-soft: #bdb4a6;
+  --ink-faint: #7d766b;
+  --line: rgb(243 238 228 / 0.09);
+  --line-strong: rgb(243 238 228 / 0.2);
+  --glass: rgb(25 21 19 / 0.55);
+  --glass-strong: rgb(25 21 19 / 0.65);
+  --hover: rgb(243 238 228 / 0.07);
+  --shadow: rgb(0 0 0 / 0.6);
+  --dot: rgb(243 238 228 / 0.04);
 }

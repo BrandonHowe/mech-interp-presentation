@@ -4,8 +4,6 @@ import { add, scale, sub, type Vec2 } from '../../lib/vec'
 import {
   VIEW_CENTER,
   VIEW_HALF,
-  ablate,
-  ablateExample,
   answered,
   clampToView,
   meanN,
@@ -15,19 +13,18 @@ import {
   score,
   steer,
   steerExample,
+  subtractExample,
   unit,
 } from './data'
 import styles from './RefusalPlot.module.css'
 
-export type ExampleMode = 'none' | 'new' | 'predict' | 'ablate-before' | 'ablate' | 'steer-before' | 'steer'
+export type ExampleMode = 'none' | 'new' | 'predict' | 'subtract-before' | 'subtract' | 'steer-before' | 'steer'
 
 export interface RefusalVisual {
   points: 'hidden' | 'full' | 'faint' | 'dim'
   means: boolean
   direction: boolean
   boundary: boolean
-  /** Unit vector u at the origin and the score axis through the origin. */
-  axis: boolean
   example: ExampleMode
 }
 
@@ -36,6 +33,7 @@ interface Props {
   probe: Vec2
   onProbeChange: (p: Vec2) => void
   alpha: number
+  removeAlpha: number
 }
 
 /** Model units → SVG units (y up). Display only; never used for scores. */
@@ -46,7 +44,6 @@ const fromScreen = ([x, y]: Vec2): Vec2 => [x / S + VIEW_CENTER[0], -y / S + VIE
 
 const TRIANGLE = 'M0 -7 L6.1 3.6 L-6.1 3.6 Z'
 const ease = [0.22, 1, 0.36, 1] as const
-const move = { duration: 1.1, ease }
 
 // Unit vector in screen space (y flipped), for drawing.
 const su: Vec2 = [unit[0], -unit[1]]
@@ -73,13 +70,12 @@ function Fade({ show, children, delay = 0 }: { show: boolean; children: ReactNod
   )
 }
 
-export function RefusalPlot({ visual, probe, onProbeChange, alpha }: Props) {
+export function RefusalPlot({ visual, probe, onProbeChange, alpha, removeAlpha }: Props) {
   const clipId = useId()
   const svgRef = useRef<SVGSVGElement>(null)
   const ex = visual.example
 
   const pointOpacity = { hidden: 0, full: 0.8, faint: 0.14, dim: 0.28 }[visual.points]
-  const origin = toScreen([0, 0])
 
   // d arrow between the means, shortened to clear the mean markers.
   const [nx, ny] = toScreen(meanN)
@@ -88,24 +84,20 @@ export function RefusalPlot({ visual, probe, onProbeChange, alpha }: Props) {
   const dEnd: Vec2 = [rx - su[0] * 20, ry - su[1] * 20]
   const [mx, my] = toScreen(mid)
 
-  // u arrow at the origin (length 1 model unit).
-  const uTip = toScreen(unit)
-
   // Predict: projection of the probe onto the line through the means (along u).
   // Its signed distance from the midpoint m is h·u − m·u, the score minus the threshold.
   const probeScreen = toScreen(probe)
   const probeFoot = toScreen(add(mid, scale(unit, score(sub(probe, mid)))))
   const probeRefuses = score(sub(probe, mid)) > 0
 
-  // Ablate: h, its component along u, and the ablated point.
-  const aH = ablateExample.h
-  const aHs = toScreen(aH)
-  const aFoot = toScreen(scale(unit, score(aH)))
-  const aAfter = toScreen(ablate(aH))
-  const ablated = ex === 'ablate'
-  const aNow = ablated ? aAfter : aHs
+  // Subtract: h and h − d.
+  const xH = toScreen(subtractExample.h)
+  // The removed example stays on the plot through the adding steps, so both show at once.
+  const subtracting = ex === 'subtract-before' || ex === 'subtract' || ex === 'steer-before' || ex === 'steer'
+  const xShift = subtracting && ex !== 'subtract-before' ? removeAlpha : 0
+  const xNow = toScreen(steer(subtractExample.h, -xShift))
 
-  // Steer: h and h + αu.
+  // Steer: h and h + αd.
   const sH = steerExample.h
   const sHs = toScreen(sH)
   const steered = ex === 'steer'
@@ -169,11 +161,6 @@ export function RefusalPlot({ visual, probe, onProbeChange, alpha }: Props) {
             </g>
           )
         })}
-        <g className={styles.axis}>
-          <line x1={origin[0]} x2={origin[0]} y1={-H} y2={H} />
-          <line y1={origin[1]} y2={origin[1]} x1={-H} x2={H} />
-        </g>
-
         {/* Half-planes and boundary, in a frame rotated to the direction. */}
         <g transform={`translate(${mx} ${my}) rotate(${angle})`}>
           <motion.rect
@@ -204,29 +191,6 @@ export function RefusalPlot({ visual, probe, onProbeChange, alpha }: Props) {
               transition={{ duration: 0.9, ease }}
             />
           ))}
-        </g>
-
-        {/* Score axis through the origin, along u. */}
-        <g transform={`translate(${origin[0]} ${origin[1]}) rotate(${angle})`}>
-          <motion.line
-            className={styles.scoreAxis}
-            x1={-1000}
-            x2={1000}
-            y1={0}
-            y2={0}
-            initial={false}
-            animate={{ opacity: visual.axis ? 1 : 0 }}
-          />
-          {/* Where h·u = 0: everything ablation can land on. */}
-          <motion.line
-            className={styles.nullLine}
-            x1={0}
-            x2={0}
-            y1={-1000}
-            y2={1000}
-            initial={false}
-            animate={{ opacity: ex === 'ablate-before' || ex === 'ablate' ? 1 : 0 }}
-          />
         </g>
 
         {answered.map((p, i) => {
@@ -303,19 +267,6 @@ export function RefusalPlot({ visual, probe, onProbeChange, alpha }: Props) {
         <MeanMarker at={toScreen(meanN)} group="n" visible={visual.means} />
         <MeanMarker at={toScreen(meanR)} group="r" visible={visual.means} />
 
-        {/* Origin and the unit vector u. */}
-        <circle className={styles.origin} cx={origin[0]} cy={origin[1]} r={3.5} />
-        <Fade show={visual.axis}>
-          <line className={styles.uArrow} x1={origin[0]} y1={origin[1]} x2={uTip[0]} y2={uTip[1]} />
-          <path className={styles.uArrow} d={arrowHead(uTip, su, 9)} />
-          <text className={styles.labelSmall} x={uTip[0] - perp[0] * 14 - 4} y={uTip[1] - perp[1] * 14 + 5}>
-            u
-          </text>
-        </Fade>
-        <text className={styles.labelSmall} x={origin[0] + 8} y={origin[1] - 8}>
-          0
-        </text>
-
         {/* Predict: a new example, its projection, and a draggable point. */}
         <Fade show={ex === 'new' || ex === 'predict'}>
           <Fade show={ex === 'predict'}>
@@ -361,62 +312,30 @@ export function RefusalPlot({ visual, probe, onProbeChange, alpha }: Props) {
           </g>
         </Fade>
 
-        {/* Ablate: remove the component along u. */}
-        <Fade show={ex === 'ablate-before' || ex === 'ablate'}>
-          <Fade show={ex === 'ablate-before'}>
-            <line className={styles.component} x1={origin[0]} y1={origin[1]} x2={aFoot[0]} y2={aFoot[1]} />
-            <line className={styles.projection} x1={aHs[0]} y1={aHs[1]} x2={aFoot[0]} y2={aFoot[1]} />
-            <circle className={styles.foot} cx={aFoot[0]} cy={aFoot[1]} r={4} />
-            <text
-              className={styles.labelSmall}
-              x={(origin[0] + aFoot[0]) / 2 + perp[0] * 14}
-              y={(origin[1] + aFoot[1]) / 2 + perp[1] * 14}
-              textAnchor="end"
-            >
-              (h·u)u
-            </text>
+        {/* Subtract: move h by a copy of d, backwards. */}
+        <Fade show={subtracting}>
+          <Fade show={xShift > 0.05}>
+            <path className={styles.ghostR} d={TRIANGLE} transform={`translate(${xH[0]} ${xH[1]}) scale(1.6)`} />
+            <DCopy from={xH} alpha={-xShift} />
           </Fade>
-          <Fade show={ablated}>
-            <path className={styles.ghostR} d={TRIANGLE} transform={`translate(${aHs[0]} ${aHs[1]}) scale(1.6)`} />
-          </Fade>
-          <Fade show={ablated} delay={0.9}>
-            <line className={styles.moveLine} x1={aHs[0]} y1={aHs[1]} x2={aAfter[0]} y2={aAfter[1]} />
-            <text className={styles.labelSmall} x={aAfter[0] + 14} y={aAfter[1] + 22}>
-              h − (h·u)u
-            </text>
-          </Fade>
-          <motion.g initial={false} animate={{ x: aNow[0], y: aNow[1] }} transition={move}>
+          <motion.g initial={false} animate={{ x: xNow[0], y: xNow[1] }} transition={{ duration: 0.5, ease }}>
             <path className={styles.exampleR} d={TRIANGLE} transform="scale(1.6)" />
-            <motion.text
-              className={styles.label}
-              x={-16}
-              y={-12}
-              textAnchor="end"
-              initial={false}
-              animate={{ opacity: ablated ? 0 : 1 }}
-            >
-              h
-            </motion.text>
+            <text className={styles.label} x={-16} y={-12} textAnchor="end">
+              {xShift > 0.05 ? 'h − αd' : 'h'}
+            </text>
           </motion.g>
         </Fade>
 
-        {/* Steer: add αu. */}
+        {/* Steer: move h by α copies of d. */}
         <Fade show={ex === 'steer-before' || ex === 'steer'}>
           <Fade show={steered && sShift > 0.05}>
             <circle className={styles.ghostN} cx={sHs[0]} cy={sHs[1]} r={9} />
-            <motion.line
-              className={styles.moveLine}
-              x1={sHs[0]}
-              y1={sHs[1]}
-              initial={false}
-              animate={{ x2: sNow[0], y2: sNow[1] }}
-              transition={{ duration: 0.5, ease }}
-            />
+            <DCopy from={sHs} alpha={sShift} />
           </Fade>
           <motion.g initial={false} animate={{ x: sNow[0], y: sNow[1] }} transition={{ duration: 0.5, ease }}>
             <circle className={styles.exampleN} r={9} />
-            <text className={styles.label} x={14} y={-12}>
-              {steered && sShift > 0.05 ? 'h + αu' : 'h'}
+            <text className={styles.label} x={-14} y={-12} textAnchor="end">
+              {steered && sShift > 0.05 ? 'h + αd' : 'h'}
             </text>
           </motion.g>
         </Fade>
@@ -434,6 +353,27 @@ export function RefusalPlot({ visual, probe, onProbeChange, alpha }: Props) {
         </text>
       </g>
     </svg>
+  )
+}
+
+/** A dashed copy of the d arrow, scaled by α and starting at a point. */
+function DCopy({ from, alpha }: { from: Vec2; alpha: number }) {
+  const to = toScreen(steer(fromScreen(from), alpha))
+  const len = Math.hypot(to[0] - from[0], to[1] - from[1])
+  const dir: Vec2 = len > 0 ? [(to[0] - from[0]) / len, (to[1] - from[1]) / len] : su
+  // Stop short of the moved marker.
+  const tip: Vec2 = [to[0] - dir[0] * 14, to[1] - dir[1] * 14]
+  return (
+    <g className={styles.dCopy}>
+      <motion.line
+        initial={false}
+        x1={from[0]}
+        y1={from[1]}
+        animate={{ x2: tip[0], y2: tip[1] }}
+        transition={{ duration: 0.5, ease }}
+      />
+      {len > 30 && <path d={arrowHead(tip, dir, 12)} />}
+    </g>
   )
 }
 

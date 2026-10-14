@@ -6,21 +6,23 @@ import { Reserve } from '../Reserve'
 import {
   ALPHA_MAX,
   GENERATIONS,
-  ablateExample,
   predictExample,
+  refusesAt,
+  steer,
   score,
   steerExample,
+  subtractExample,
   threshold,
   type RefusalInteraction,
 } from './data'
 import { RefusalPlot, type RefusalVisual } from './RefusalPlot'
 import styles from './RefusalStage.module.css'
 
-const base = { points: 'full', means: false, direction: false, boundary: false, axis: false, example: 'none' } as const
+const base = { points: 'full', means: false, direction: false, boundary: false, example: 'none' } as const
 const built = { ...base, means: true, direction: true, boundary: true }
 // Interventions hide the toy boundary (they are tested by behavior, not by
-// crossing a line) and the d arrow (u at the origin carries the direction).
-const intervene = { ...base, points: 'dim', means: true, axis: true } as const
+// crossing a line) but keep d, since a copy of it moves the point.
+const intervene = { ...base, points: 'dim', means: true, direction: true } as const
 
 /** Target visual state for each step, so any entry point reaches the same picture. */
 const visuals: Record<string, RefusalVisual> = {
@@ -33,8 +35,8 @@ const visuals: Record<string, RefusalVisual> = {
   predict: { ...built, points: 'dim', example: 'predict' },
   response: { ...built, points: 'dim', example: 'predict' },
   causation: built,
-  'ablate-before': { ...intervene, example: 'ablate-before' },
-  ablate: { ...intervene, example: 'ablate' },
+  'subtract-before': { ...intervene, example: 'subtract-before' },
+  subtract: { ...intervene, example: 'subtract' },
   'steer-before': { ...intervene, example: 'steer-before' },
   steer: { ...intervene, example: 'steer' },
 }
@@ -42,14 +44,16 @@ const visuals: Record<string, RefusalVisual> = {
 const signed = (v: number) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(2)}`
 const near = (a: readonly number[], b: readonly number[]) => Math.hypot(a[0] - b[0], a[1] - b[1]) < 1e-6
 
-type Panel = 'generate' | 'predict' | 'ablate' | 'steer' | null
+type Panel = 'generate' | 'predict' | 'causality' | null
+
+/** Step 4, in order: the question, then removing refusal, then adding it. */
+const CAUSALITY = ['causation', 'subtract-before', 'subtract', 'steer-before', 'steer']
 
 const panelFor = (stepId: string): Panel => {
   const ex = (visuals[stepId] ?? visuals.examples).example
   if (stepId === 'generate' || stepId === 'examples') return 'generate'
   if (ex === 'new' || ex === 'predict') return 'predict'
-  if (ex === 'ablate-before' || ex === 'ablate') return 'ablate'
-  if (ex === 'steer-before' || ex === 'steer') return 'steer'
+  if (CAUSALITY.includes(stepId)) return 'causality'
   return null
 }
 
@@ -65,7 +69,6 @@ export function RefusalStage({ step, steps, interaction, setInteraction, resetIn
 
   const renderCopy = (s: StepDef) => {
     const { heading, body, subheading: formula, bullets, reveal } = s.screen ?? {}
-    const ex = (visuals[s.id] ?? visuals.examples).example
     const panel = panelFor(s.id)
     const shown = reveal ?? bullets?.length ?? 0
     return (
@@ -113,21 +116,13 @@ export function RefusalStage({ step, steps, interaction, setInteraction, resetIn
             onReset={resetInteraction}
           />
         )}
-        {panel === 'ablate' && (
-          <BehaviorCard
-            prompt={ablateExample.prompt}
-            shape="r"
-            before={ablateExample.before}
-            afterLabel="After removing"
-            after={ex === 'ablate' ? ablateExample.after : null}
-            afterShape="n"
-          />
-        )}
-        {panel === 'steer' && (
-          <SteerPanel
-            active={ex === 'steer'}
+        {panel === 'causality' && (
+          <CausalityPanel
+            stage={CAUSALITY.indexOf(s.id)}
             alpha={interaction.alpha}
+            removeAlpha={interaction.removeAlpha}
             onAlpha={(alpha) => setInteraction({ ...interaction, alpha })}
+            onRemoveAlpha={(removeAlpha) => setInteraction({ ...interaction, removeAlpha })}
           />
         )}
       </>
@@ -152,6 +147,7 @@ export function RefusalStage({ step, steps, interaction, setInteraction, resetIn
             visual={visual}
             probe={interaction.probe}
             alpha={interaction.alpha}
+            removeAlpha={interaction.removeAlpha}
             onProbeChange={(probe) => setInteraction({ ...interaction, probe })}
           />
         </div>
@@ -294,32 +290,6 @@ interface Outcome {
   text: string
 }
 
-function BehaviorCard({
-  prompt,
-  shape,
-  before,
-  afterLabel,
-  after,
-  afterShape,
-}: {
-  prompt: string
-  shape: 'r' | 'n'
-  before: Outcome
-  afterLabel: string
-  after: Outcome | null
-  afterShape: 'r' | 'n'
-}) {
-  return (
-    <div className={styles.panel}>
-      <Prompt text={prompt} />
-      <div className={styles.card}>
-        <OutcomeRow label="Normally" shape={shape} outcome={before} />
-        <OutcomeRow label={afterLabel} shape={afterShape} outcome={after} delay={0.8} />
-      </div>
-    </div>
-  )
-}
-
 function OutcomeRow({
   label,
   shape,
@@ -361,37 +331,91 @@ function OutcomeRow({
   )
 }
 
-function SteerPanel({ active, alpha, onAlpha }: { active: boolean; alpha: number; onAlpha: (a: number) => void }) {
-  const refuses = active && alpha >= steerExample.refuseAt
+/**
+ * Step 4: removing refusal from a harmful prompt (stages 1–2), then adding it
+ * to a harmless one (3–4). Both sections are laid out from the start and only
+ * fade in, so nothing shifts.
+ */
+function CausalityPanel({
+  stage,
+  alpha,
+  removeAlpha,
+  onAlpha,
+  onRemoveAlpha,
+}: {
+  stage: number
+  alpha: number
+  removeAlpha: number
+  onAlpha: (a: number) => void
+  onRemoveAlpha: (a: number) => void
+}) {
+  const removing = stage >= 2
+  const complies = removing && !refusesAt(steer(subtractExample.h, -removeAlpha))
+  const steering = stage >= 4
+  const refuses = steering && refusesAt(steer(steerExample.h, alpha))
   return (
-    <div className={styles.panel}>
-      <Prompt text={steerExample.prompt} />
-      <div className={styles.card}>
-        <OutcomeRow label="Normally" shape="n" outcome={steerExample.before} />
-        <OutcomeRow
-          label="After adding"
-          shape={refuses ? 'r' : 'n'}
-          outcome={active ? (refuses ? steerExample.after : steerExample.before) : null}
-        />
-        <motion.label
-          className={styles.slider}
-          initial={false}
-          animate={{ opacity: active ? 1 : 0.35 }}
-          data-no-swipe
-        >
-          <span className={styles.alpha}>α = {(active ? alpha : 0).toFixed(1)}</span>
-          <input
-            type="range"
-            min={0}
-            max={ALPHA_MAX}
-            step={0.1}
-            value={active ? alpha : 0}
-            disabled={!active}
-            onChange={(e) => onAlpha(Number(e.target.value))}
-            aria-label="Steering strength alpha"
+    <div className={styles.causality}>
+      <motion.section initial={false} animate={{ opacity: stage >= 1 ? 1 : 0 }} aria-hidden={stage < 1}>
+        <h3 className={styles.sectionTitle}>Removing refusal from harmful prompts</h3>
+        <div className={styles.promptRow}>
+          <Prompt text={subtractExample.prompt} />
+          <span className={styles.formula}>h − αd</span>
+        </div>
+        <div className={styles.card}>
+          <OutcomeRow label="Normally" shape="r" outcome={subtractExample.before} />
+          <OutcomeRow
+            label="After subtracting"
+            shape={complies ? 'n' : 'r'}
+            outcome={removing ? (complies ? subtractExample.after : subtractExample.before) : null}
           />
-        </motion.label>
-      </div>
+          <Strength label="Removal strength" active={removing} value={removeAlpha} onChange={onRemoveAlpha} />
+        </div>
+      </motion.section>
+      <motion.section initial={false} animate={{ opacity: stage >= 3 ? 1 : 0 }} aria-hidden={stage < 3}>
+        <h3 className={styles.sectionTitle}>Adding refusal to harmless prompts</h3>
+        <div className={styles.promptRow}>
+          <Prompt text={steerExample.prompt} />
+          <span className={styles.formula}>h + αd</span>
+        </div>
+        <div className={styles.card}>
+          <OutcomeRow label="Normally" shape="n" outcome={steerExample.before} />
+          <OutcomeRow
+            label="After adding"
+            shape={refuses ? 'r' : 'n'}
+            outcome={steering ? (refuses ? steerExample.after : steerExample.before) : null}
+          />
+          <Strength label="Steering strength" active={steering} value={alpha} onChange={onAlpha} />
+        </div>
+      </motion.section>
     </div>
+  )
+}
+
+/** An α slider, dimmed and parked at 0 until its step. */
+function Strength({
+  label,
+  active,
+  value,
+  onChange,
+}: {
+  label: string
+  active: boolean
+  value: number
+  onChange: (v: number) => void
+}) {
+  return (
+    <motion.label className={styles.slider} initial={false} animate={{ opacity: active ? 1 : 0.35 }} data-no-swipe>
+      <span className={styles.alpha}>α = {(active ? value : 0).toFixed(2)}</span>
+      <input
+        type="range"
+        min={0}
+        max={ALPHA_MAX}
+        step={0.05}
+        value={active ? value : 0}
+        disabled={!active}
+        onChange={(e) => onChange(Number(e.target.value))}
+        aria-label={`${label} alpha`}
+      />
+    </motion.label>
   )
 }

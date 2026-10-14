@@ -6,17 +6,29 @@ export interface FlatStep {
   stageIndex: number
   step: StepDef
   stepIndex: number
-  /** `stage-id/step-id`, used in the URL fragment. */
+  /** `stage-id/step-id`, used in the URL path. */
   key: string
 }
 
 export type HistoryMode = 'replace' | 'push'
 
-const keyFromHash = (hash: string) => decodeURIComponent(hash.replace(/^#\/?/, ''))
+/** The app's base path, e.g. '/mech-interp-presentation/' (always ends in '/'). */
+const BASE = import.meta.env.BASE_URL
+
+/** `stage/step` from the current URL: the path after the base, or an old-style `#/stage/step`. */
+const currentKey = () => {
+  const { pathname, hash } = window.location
+  if (hash.startsWith('#/')) return decodeURIComponent(hash.slice(2))
+  const rest = pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname.replace(/^\//, '')
+  return decodeURIComponent(rest.replace(/\/$/, ''))
+}
+
+const urlFor = (key: string) => BASE + key
 
 /**
- * Narrative position, synced to the URL fragment. Ordinary next/back replace the
- * current history entry; explicit jumps (chapters, Home/End) push a new one.
+ * Narrative position, synced to the URL path (`<base>/stage/step`). Ordinary
+ * next/back replace the current history entry; explicit jumps (chapters,
+ * Home/End) push a new one. Old `#/stage/step` links are rewritten on load.
  */
 export function useNavigation(stages: AnyStage[]) {
   const steps = useMemo<FlatStep[]>(
@@ -33,12 +45,9 @@ export function useNavigation(stages: AnyStage[]) {
     [stages],
   )
 
-  const indexOfHash = useCallback(
-    (hash: string) => steps.findIndex((s) => s.key === keyFromHash(hash)),
-    [steps],
-  )
+  const indexOfKey = useCallback((key: string) => steps.findIndex((s) => s.key === key), [steps])
 
-  const [index, setIndex] = useState(() => Math.max(0, indexOfHash(window.location.hash)))
+  const [index, setIndex] = useState(() => Math.max(0, indexOfKey(currentKey())))
   const [direction, setDirection] = useState<1 | -1>(1)
   const indexRef = useRef(index)
 
@@ -55,24 +64,23 @@ export function useNavigation(stages: AnyStage[]) {
     (target: number, mode: HistoryMode = 'replace') => {
       const next = Math.min(Math.max(target, 0), steps.length - 1)
       if (!apply(next)) return
-      const url = `#/${steps[next].key}`
+      const url = urlFor(steps[next].key)
       if (mode === 'push') window.history.pushState(null, '', url)
       else window.history.replaceState(null, '', url)
     },
     [apply, steps],
   )
 
-  // Normalize an unknown or missing fragment on load.
+  // Normalize an unknown, missing, or old hash-style location on load.
   useEffect(() => {
-    if (indexOfHash(window.location.hash) < 0) {
-      window.history.replaceState(null, '', `#/${steps[indexRef.current].key}`)
-    }
-  }, [indexOfHash, steps])
+    const url = urlFor(steps[indexRef.current].key)
+    if (window.location.pathname !== url || window.location.hash) window.history.replaceState(null, '', url)
+  }, [steps])
 
-  // Browser back/forward and manual fragment edits.
+  // Browser back/forward and manual URL edits.
   useEffect(() => {
     const sync = () => {
-      const i = indexOfHash(window.location.hash)
+      const i = indexOfKey(currentKey())
       if (i >= 0) apply(i)
     }
     window.addEventListener('popstate', sync)
@@ -81,7 +89,7 @@ export function useNavigation(stages: AnyStage[]) {
       window.removeEventListener('popstate', sync)
       window.removeEventListener('hashchange', sync)
     }
-  }, [apply, indexOfHash])
+  }, [apply, indexOfKey])
 
   const stageStart = useCallback(
     (stageIndex: number) => steps.findIndex((s) => s.stageIndex === stageIndex),

@@ -5,6 +5,6 @@
   pointer-events: none;
   background-color: var(--bg);
   /* 28px grid of 1.1px-radius dots, centered in each cell. */
-  background-image: radial-gradient(circle, rgb(30 28 25 / 0.11) 1.1px, transparent 1.6px);
+  background-image: radial-gradient(circle, var(--dot) 1.1px, transparent 1.6px);
   background-size: 28px 28px;
 }

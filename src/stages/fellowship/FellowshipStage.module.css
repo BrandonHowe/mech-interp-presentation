@@ -1,0 +1,87 @@
+.layout {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: clamp(24px, 5cqi, 96px);
+  padding: 6cqh 7cqi;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(30px, min(4.8cqi, 8.5cqh), 80px);
+  font-weight: 560;
+  font-variation-settings: 'opsz' 72;
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
+
+.deadline {
+  margin: 0.7em 0 0;
+  font-size: clamp(17px, min(2.1cqi, 3.9cqh), 32px);
+  font-weight: 600;
+  color: var(--group-a);
+}
+
+.list {
+  margin: clamp(16px, 4.5cqh, 52px) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: clamp(8px, 2cqh, 20px);
+}
+
+.item {
+  position: relative;
+  padding-left: 1.4em;
+  font-size: clamp(15px, min(1.9cqi, 3.5cqh), 28px);
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+
+.item::before {
+  content: '';
+  position: absolute;
+  left: 0.15em;
+  top: 0.5em;
+  width: 0.36em;
+  height: 0.36em;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.qr {
+  margin: 0;
+  justify-self: center;
+  width: min(100%, 62cqh);
+  display: grid;
+  gap: clamp(10px, 2.4cqh, 24px);
+  justify-items: center;
+}
+
+/* White quiet zone around the code keeps it scannable on any theme. */
+.qr img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 7%;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgb(30 28 25 / 0.08),
+    0 16px 40px -18px rgb(30 28 25 / 0.35);
+}
+
+.url {
+  font-size: clamp(16px, min(2.2cqi, 4cqh), 34px);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+@container stage (aspect-ratio < 1.1) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

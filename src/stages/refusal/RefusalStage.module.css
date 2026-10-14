@@ -336,10 +336,22 @@
 .stepItem {
   display: grid;
   justify-items: start;
-  padding-left: 14px;
-  border-left: 3px solid var(--line-strong);
+  position: relative;
+  padding-left: 1.4em;
   font-size: clamp(15px, min(1.5cqi, 2.8cqh), 21px);
   line-height: 1.4;
+}
+
+/* A dot bullet, as on "Why Mech Interp?". */
+.stepItem::before {
+  content: '';
+  position: absolute;
+  left: 0.15em;
+  top: 0.55em;
+  width: 0.36em;
+  height: 0.36em;
+  border-radius: 50%;
+  background: var(--ink);
 }
 
 .stepItem .formula {
@@ -367,4 +379,61 @@
 .reply[data-empty='true'] {
   color: var(--ink-faint);
   font-style: italic;
+}
+
+/* Step 4: two sections, removing and adding refusal. */
+
+.causality {
+  display: grid;
+  gap: clamp(12px, 2.6cqh, 26px);
+  margin-top: clamp(10px, 2.2cqh, 22px);
+}
+
+.causality section {
+  display: grid;
+  gap: clamp(6px, 1.2cqh, 12px);
+}
+
+.sectionTitle {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em 0.7em;
+  font-family: var(--font-display);
+  font-size: clamp(16px, min(1.6cqi, 3cqh), 23px);
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+
+.promptRow {
+  display: grid;
+  grid-template-columns: minmax(0, auto) auto;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+}
+
+.promptRow .formula {
+  margin: 0;
+}
+
+/* Before and after side by side, the slider underneath. */
+.causality .card {
+  grid-template-columns: 1fr 1fr;
+  column-gap: clamp(12px, 1.6cqi, 22px);
+}
+
+.causality .outcome {
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 2px;
+}
+
+.causality .outcomeLabel {
+  min-width: 0;
+}
+
+.causality .slider {
+  grid-column: 1 / -1;
 }

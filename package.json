@@ -7,11 +7,12 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "export:club": "npm run build && rm -rf ../club-website/public/mech-interp-presentation && cp -R dist ../club-website/public/mech-interp-presentation"
   },
   "dependencies": {
-    "@fontsource-variable/fraunces": "^5.3.0",
     "@fontsource-variable/ibm-plex-sans": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
     "motion": "^14.0.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"

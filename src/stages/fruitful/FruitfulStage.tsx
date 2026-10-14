@@ -3,6 +3,7 @@ import type { StageProps } from '../../types'
 import { Inline } from '../Inline'
 import { ScaleBar } from '../ScaleBar'
 import styles from './FruitfulStage.module.css'
+import { asset } from '../../lib/asset'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
@@ -34,7 +35,7 @@ export function FruitfulStage({ step }: StageProps<undefined>) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease, delay: 0.35 }}
           >
-            <img src={figure.src} alt={figure.alt} />
+            <img src={asset(figure.src)} alt={figure.alt} />
           </motion.figure>
         )}
 

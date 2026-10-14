@@ -198,6 +198,13 @@
 
 /* Plane */
 
+.planeNote {
+  font-size: 17px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
 .planeFrame {
   fill: rgb(251 248 242 / 0.7);
   stroke: var(--line-strong);

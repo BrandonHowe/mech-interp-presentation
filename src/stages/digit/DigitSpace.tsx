@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { add, type Vec2 } from '../../lib/vec'
 import { GRID, RANGE, TILE, cellFor, classCenters, points } from './latent'
 import styles from './DigitStage.module.css'
+import { asset } from '../../lib/asset'
 
 interface Props {
   point: Vec2
@@ -131,7 +132,7 @@ export function DigitSpace({ point, onPointChange, showData }: Props) {
         height={DIGIT_SIZE}
         viewBox={`${col * TILE} ${row * TILE} ${TILE} ${TILE}`}
       >
-        <image className={styles.digit} href="/digits/grid.png" width={GRID * TILE} height={GRID * TILE} />
+        <image className={styles.digit} href={asset('/digits/grid.png')} width={GRID * TILE} height={GRID * TILE} />
       </svg>
     </svg>
   )

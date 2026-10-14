@@ -4,7 +4,7 @@ This separate project is an interactive web presentation for undergraduate progr
 
 Authorized scope (October 11, 2026): the shell plus draft versions of every scene, with synthetic, labeled data (see the plan's implementation record). Real data, verified research claims, and publication still require the user's request. Keep this project alongside `club-website`, never inside that repository. Preserve existing work and unrelated projects.
 
-Run with `npm run dev`; check with `npm run build` (typecheck + build). Code layout: `src/shell` (navigation, captions, controls, preferences), `src/content/stages.ts` (narrative sequence and copy), `src/stages/*` (one purpose-built component per stage), `src/lib` (pure math helpers). The `structure-test` stage is scaffolding to delete once real stages exist.
+Run with `npm run dev`; check with `npm run build` (typecheck + build). Code layout: `src/shell` (navigation, captions, controls, preferences), `src/content/stages.ts` (narrative sequence and copy), `src/stages/*` (one purpose-built component per stage), `src/lib` (pure math helpers).
 
 Follow the refusal-centered narrative: representation-space intuition → linear measurement and prediction → correlation versus causation → ablation and steering → broader examples and qualified takeaway. Preserve the staged, persistent diagrams and meaningful interactions; do not reduce the plan to a generic slide outline or front-load a transformer lecture.
 
@@ -15,7 +15,7 @@ Accuracy requirements:
 - Label 2D/3D diagrams as simplifications. Do not imply universal linear structure, clean separation, or one interpretable meaning per neuron.
 - Distinguish probing (reading), ablation (removing a projection), and steering (adding a direction). Readability is not causality; causal influence on refusal is not a complete model explanation or safety solution.
 - For unit direction `u`, ablation is `h - dot(h, u) * u`; additive steering is `h + alpha * u`. Do not animate projection removal as subtraction of a fixed centroid arrow or guarantee a classifier-boundary crossing.
-- The teaching diagram now groups harmful/harmless prompts (user request, October 11), matching the refusal paper's instruction contrast; the resulting direction must still be shown to relate to refusal behavior. Verify actual methodology before making exact empirical claims.
+- The refusal diagram is an illustration of the steering-vector concept, not a replication of the refusal paper (user, October 12); it need not match the paper's methodology. It groups harmful/harmless prompts (user request, October 11). Only statements that attribute a result to a real study need checking against that study.
 - Preserve data provenance. Label synthetic illustrations and outputs in the captions, not with on-slide chips or tags (user request, October 11); use verified measured or recorded responses for real-result claims, with model/setup limits. Avoid displaying dangerous instructions.
 - Treat linked studies as research leads until checked. Refusal prediction is not harmfulness or intent detection; factual truth readouts do not establish a universal lie detector.
 

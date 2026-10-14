@@ -55,6 +55,23 @@
   text-wrap: pretty;
 }
 
+.icon {
+  display: block;
+  width: clamp(36px, min(5cqi, 9cqh), 76px);
+  height: auto;
+  margin-bottom: 0.9em;
+  color: var(--group-a);
+}
+
+/* Icon cards: taller and roomier, so three short cards fill the slide. */
+.cards[data-icons] .card {
+  padding: clamp(18px, 5cqh, 52px) clamp(16px, 2.6cqi, 40px);
+}
+
+.cards[data-icons] .cardBody {
+  font-size: clamp(14px, min(1.7cqi, 3.1cqh), 25px);
+}
+
 @container stage (aspect-ratio < 1.1) {
   .card {
     flex-basis: 100%;

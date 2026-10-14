@@ -1,0 +1,66 @@
+.body {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 1em;
+}
+
+.list[data-depth='0'] {
+  width: min(100%, 1200px);
+  gap: 1.3em;
+  font-size: clamp(17px, min(2.05cqi, 3.7cqh), 30px);
+}
+
+.list:not([data-depth='0']) {
+  margin-top: 0.8em;
+  gap: 0.8em;
+  color: var(--ink-soft);
+}
+
+/* Sub-points are a step smaller; deeper levels keep that size. */
+.list[data-depth='1'] {
+  font-size: 0.86em;
+}
+
+.item {
+  position: relative;
+  padding-left: 1.4em;
+}
+
+.item p {
+  margin: 0;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+/* Filled dots at the top level, hollow below, dashes deepest, as in a doc outline. */
+.item::before {
+  content: '';
+  position: absolute;
+  left: 0.15em;
+  top: 0.52em;
+  width: 0.36em;
+  height: 0.36em;
+  border-radius: 50%;
+  background: currentColor;
+  box-sizing: border-box;
+}
+
+.list[data-depth='1'] > .item::before {
+  background: none;
+  border: 1.5px solid currentColor;
+}
+
+.list[data-depth='2'] > .item::before {
+  top: 0.68em;
+  width: 0.5em;
+  height: 1.5px;
+  border-radius: 0;
+}

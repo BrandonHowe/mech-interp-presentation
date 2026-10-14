@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
 import type { StageProps } from '../../types'
 import { Inline } from '../Inline'
+import { CardIcon } from './icons'
 import styles from './CardsStage.module.css'
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -21,7 +22,7 @@ export function CardsStage({ step }: StageProps<undefined>) {
           {heading}
         </motion.h2>
       )}
-      <ul className={styles.cards}>
+      <ul className={styles.cards} data-icons={columns.some((c) => c.icon) || undefined}>
         {columns.map((c, i) => (
           <motion.li
             key={c.id}
@@ -30,6 +31,7 @@ export function CardsStage({ step }: StageProps<undefined>) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease, delay: 0.4 + i * 0.15 }}
           >
+            {c.icon && <CardIcon name={c.icon} className={styles.icon} />}
             <h3 className={styles.cardTitle}>{c.title}</h3>
             <p className={styles.cardBody}>
               <Inline text={c.body} />

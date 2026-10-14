@@ -63,8 +63,11 @@ const VECTOR_X_PLANE = 130
 
 /** Plane: centered at (PX, PY), half-size PH in SVG units; values span ±2. */
 const PX = 790
-const PY = 230
-const PH = 165
+const PY = 190
+const PH = 140
+/** Beside the plane, the activation rows shift up to center on it. */
+const PLANE_SHIFT = PY - ROWS[1]
+const PLANE_NOTE = '2D grids are great for visualization, but real model activations live in spaces with **thousands of dimensions!**'
 const toPlane = (a: number, b: number) => [PX + (a / 2) * PH, PY - (b / 2) * PH] as const
 
 export function NetworkStage({ step, steps }: StageProps<undefined>) {
@@ -156,13 +159,14 @@ export function NetworkStage({ step, steps }: StageProps<undefined>) {
           {/* Activations: one list per prompt */}
           <motion.g
             initial={false}
-            animate={{ opacity: visual.activations ? 1 : 0, x: vectorX }}
+            animate={{ opacity: visual.activations ? 1 : 0, x: vectorX, y: visual.plane ? PLANE_SHIFT : 0 }}
             transition={{
               opacity: {
                 ...fade,
                 delay: visual.activations && !visual.plane ? 0.3 : 0,
               },
               x: move,
+              y: move,
             }}
           >
             {INPUTS.map((input, k) => (
@@ -234,6 +238,11 @@ export function NetworkStage({ step, steps }: StageProps<undefined>) {
                 </g>
               )
             })}
+            <foreignObject x={PX - 200} y={PY + PH + 14} width={400} height={80}>
+              <p className={styles.planeNote}>
+                <Inline text={PLANE_NOTE} />
+              </p>
+            </foreignObject>
           </motion.g>
         </svg>
       </div>

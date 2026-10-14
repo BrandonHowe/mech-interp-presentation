@@ -1,0 +1,24 @@
+.layout {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6cqh 4cqi;
+  text-align: center;
+}
+
+.heading {
+  font-family: var(--font-display);
+  /* One line; sized so the longest title ("Part 2: Mechanistic Interpretability") fits. */
+  font-size: clamp(24px, min(6cqi, 13cqh), 132px);
+  white-space: nowrap;
+  font-weight: 560;
+  font-variation-settings: 'opsz' 72;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+}
+
+.part {
+  color: var(--ink-faint);
+}

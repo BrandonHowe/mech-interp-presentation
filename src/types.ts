@@ -8,6 +8,8 @@ export interface ScreenCopy {
   bullets?: Bullet[]
   /** Show only the first n bullets; the rest keep their space but stay invisible. */
   reveal?: number
+  /** Split the bullets into this many columns, filled top to bottom. */
+  bulletColumns?: number
   /** Side-by-side items, e.g. two contrasting approaches. */
   columns?: Column[]
   /** Secondary heading, e.g. a question introducing the bullets. */
@@ -35,13 +37,17 @@ export interface Column {
   body: string
   /** Small label under the column's figure. */
   figureNote?: string
+  /** Line icon drawn above the title (CardsStage). */
+  icon?: 'compass' | 'book' | 'people'
 }
 
 export interface Bullet {
   /** `**bold**` is supported. */
   text: string
-  /** Indented supporting points beneath this bullet. */
+  /** Indented supporting points beneath this bullet (italic asides in BulletsStage). */
   sub?: string[]
+  /** Indented sub-bullets with a hollow dot; `**bold**` is supported. */
+  points?: string[]
 }
 
 /** One authored narrative step. Its id is stable and appears in the URL. */
@@ -84,7 +90,15 @@ export interface StageDef<I = undefined> {
    * overlapping slide-and-fade.
    */
   transition?: 'default' | 'dramatic'
+  /**
+   * Palette for the whole screen while this stage is shown; changes fade.
+   * 'dark' is for part titles; 'dusk', 'night', and 'abyss' darken step by
+   * step through Part 1's risk slides.
+   */
+  theme?: Theme
 }
+
+export type Theme = 'light' | 'dusk' | 'night' | 'abyss' | 'dark'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyStage = StageDef<any>

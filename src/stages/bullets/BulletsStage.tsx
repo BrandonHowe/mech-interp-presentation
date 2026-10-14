@@ -7,7 +7,7 @@ const ease = [0.22, 1, 0.36, 1] as const
 
 /** Centered heading with a short list of points that fade in one after another. */
 export function BulletsStage({ step }: StageProps<undefined>) {
-  const { heading, bullets = [] } = step.screen ?? {}
+  const { heading, bullets = [], bulletColumns = 1 } = step.screen ?? {}
 
   return (
     <div className={styles.layout}>
@@ -21,7 +21,11 @@ export function BulletsStage({ step }: StageProps<undefined>) {
           {heading}
         </motion.h2>
       )}
-      <ul className={styles.list}>
+      <ul
+        className={styles.list}
+        data-columns={bulletColumns > 1 || undefined}
+        style={{ '--rows': Math.ceil(bullets.length / bulletColumns) } as React.CSSProperties}
+      >
         {bullets.map((b, i) => (
           <motion.li
             key={i}
@@ -33,6 +37,15 @@ export function BulletsStage({ step }: StageProps<undefined>) {
             <p>
               <Inline text={b.text} />
             </p>
+            {b.points && (
+              <ul className={styles.points}>
+                {b.points.map((point) => (
+                  <li key={point}>
+                    <Inline text={point} />
+                  </li>
+                ))}
+              </ul>
+            )}
             {b.sub && (
               <ul className={styles.subList}>
                 {b.sub.map((sub, j) => (

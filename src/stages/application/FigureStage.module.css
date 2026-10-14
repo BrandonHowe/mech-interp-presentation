@@ -1,0 +1,26 @@
+.layout {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  justify-items: center;
+  gap: clamp(12px, 3cqh, 32px);
+  padding: 6cqh 5cqi;
+}
+
+.figure {
+  min-height: 0;
+  margin: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* The figure has its own off-white background and card borders. */
+.figure img {
+  display: block;
+  max-width: min(100%, 1500px);
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px var(--shadow), 0 12px 32px -14px var(--shadow);
+}

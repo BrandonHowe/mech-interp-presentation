@@ -1,0 +1,50 @@
+.lead {
+  margin: clamp(8px, 1.6cqh, 16px) 0 clamp(12px, 2.4cqh, 24px);
+  font-size: clamp(15px, min(1.5cqi, 2.8cqh), 21px);
+  color: var(--ink-soft);
+}
+
+.group + .group {
+  margin-top: clamp(14px, 3cqh, 30px);
+}
+
+.groupTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(17px, min(1.7cqi, 3.2cqh), 25px);
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+
+.group .point {
+  font-size: clamp(14px, min(1.35cqi, 2.6cqh), 19px);
+}
+
+.group[data-view='good'] .groupTitle {
+  color: var(--group-b);
+}
+
+.group[data-view='bad'] .groupTitle {
+  color: var(--group-a);
+}
+
+.group[data-view='good'] .point::before {
+  background: var(--group-b);
+}
+
+.group[data-view='bad'] .point::before {
+  background: var(--group-a);
+}
+
+/* The system card figure has a white background. */
+.paper {
+  padding: clamp(10px, 2cqh, 22px);
+  background: #fff;
+}
+
+.paper img {
+  display: block;
+  width: 100%;
+  max-height: 78cqh;
+  object-fit: contain;
+}

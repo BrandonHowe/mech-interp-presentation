@@ -3,6 +3,12 @@
   height: 100dvh;
   display: grid;
   overflow: hidden;
+  color: var(--ink);
+  /* Theme colors animate here; descendants inherit the in-between values. */
+  transition-property: --bg, --bg-raised, --ink, --ink-soft, --ink-faint, --line, --line-strong, --glass,
+    --glass-strong, --hover, --shadow, --dot;
+  transition-duration: 0.8s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .root[data-idle='true'] {
@@ -24,7 +30,7 @@
 
 .stageArea {
   position: relative;
-  /* Clicks and drags on slides shouldn't highlight text or SVG; captions stay selectable. */
+  /* On interactive slides, clicks and drags shouldn't highlight text or SVG. */
   user-select: none;
   -webkit-user-select: none;
   min-width: 0;
@@ -32,6 +38,17 @@
   overflow: hidden;
   container-type: size;
   container-name: stage;
+}
+
+/* Slides without interactions keep their text selectable (buttons excepted). */
+.stageArea[data-selectable='true'] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.stageArea[data-selectable='true'] button {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .stage {
